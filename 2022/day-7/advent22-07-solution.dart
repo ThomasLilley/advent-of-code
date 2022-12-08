@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:math';
 
 List<String> _input = [];
 Directory<String>? _filesystem;
 Directory<String>? _currentNode;
+List<int> _results = [];
 
 class Directory<T> {
   Directory<T>? parent;
@@ -10,6 +12,8 @@ class Directory<T> {
   List<Directory<T>>? children;
   List<ElfFile>? files;
   Directory(this.value, {this.parent, this.children, this.files});
+
+  int DirSize = 0;
 
   void add(Directory<T> child) {
     children ??= [];
@@ -25,12 +29,12 @@ class Directory<T> {
 
   int getDirectorySize() {
     int size = 0;
-    if(files != null)files!.forEach((element) => size += element.size);
-    if(children!=null)children!.forEach((element) => size+= element.getDirectorySize());
+    if (files != null) files!.forEach((element) => size += element.size);
+    if (children != null) children!.forEach((element) => size += element.getDirectorySize());
     return size;
   }
 
-  void printTree() {
+  void printTree({bool withFiles = true}) {
     int level = 0;
     String _tabs = "";
 
@@ -47,16 +51,35 @@ class Directory<T> {
     level++;
 
     print(_tabs + this.toString());
-    children?.forEach((element) => element.printTree());
-    files?.forEach((e) => print("  ${_tabs}$e "));
+    children?.forEach((element) => element.printTree(withFiles: withFiles));
+    if (withFiles) files?.forEach((e) => print("  ${_tabs}$e "));
   }
 
-  int sumDirectories(int ofSize){
+  int sumDirectories(int ofSize) {
     int size = 0;
     int _temp = getDirectorySize();
-    if(_temp <= ofSize) size += _temp;
-     children?.forEach((element) => size += element.sumDirectories(ofSize));
+    if (_temp <= ofSize) size += _temp;
+    children?.forEach((element) => size += element.sumDirectories(ofSize));
     return size;
+  }
+
+  int getRequiredSpace(int ofSize, int diskSize) {
+    int takenSpace = getDirectorySize();
+    int availableSpace = diskSize - takenSpace;
+    int requiredSpace = ofSize - availableSpace;
+    print("Dir $value: free:$availableSpace used:$takenSpace required: $requiredSpace");
+
+    return requiredSpace;
+  }
+
+  void getSizes(int requiredSpace) {
+    DirSize = getDirectorySize();
+    if (DirSize > requiredSpace) {
+      _results.add(DirSize);
+    }
+    children?.forEach((element) {
+      element.getSizes(requiredSpace);
+    });
   }
 
   @override
@@ -117,9 +140,11 @@ void solutionOne() {
       _currentNode?.addFile(ElfFile.fromString(_input[i]));
     }
   }
-  _filesystem?.printTree();
   print("Solution one: ${_filesystem?.sumDirectories(100000)}");
 }
 
-
-void solutionTwo() {}
+void solutionTwo() {
+  int? space = _filesystem?.getRequiredSpace(30000000, 70000000);
+  _filesystem?.getSizes(space!);
+  print("Solution two: ${_results.reduce(min)}");
+}
