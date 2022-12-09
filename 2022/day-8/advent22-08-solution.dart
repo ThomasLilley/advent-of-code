@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 List<String> _input = [];
 List<List<Tree>> _grid = [];
@@ -100,10 +99,8 @@ void solutionOne() {
     }
   }
 
-  int _length = 0;
   int _visibleCount = 0;
   _grid.forEach((element) {
-    _length += element.length;
     _visibleCount += element.where((element) => element.visible == true).toList().length;
   });
 
