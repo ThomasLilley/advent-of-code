@@ -2,23 +2,18 @@ import 'dart:io';
 
 List<String> _input = [];
 List<Monkey> _monkeys = [];
-bool _printDebug = false;
-bool _divideFear = true;
+bool _printDebug = true;
 
 void main() {
   readFile();
-  _divideFear = true;
   print("Solution one: ${solution(20)}");
-
-  _divideFear = false;
-  print("Solution two: ${solution(10000)}");
 }
 
 void readFile() {
   _input = File('2022/day-11/advent22-11-example.txt').readAsStringSync().split("\n\n");
 }
 
-void debugPrint(String s) {
+void debugPrint(dynamic s) {
   if (_printDebug) print(s);
 }
 
@@ -45,18 +40,6 @@ int solution(
   });
 
   for (int i = 0; i < rounds; i++) {
-    if (i == 1) {
-      print("== After round 1 ==");
-      print(_monkeys);
-    }
-    if (i!= 0 && i %20 == 0 && i < 1000) {
-      print("== After round $i ==");
-      print(_monkeys);
-    }
-    if (i != 0 && i % 1000 == 0) {
-      print("== After round $i ==");
-      print(_monkeys);
-    }
     for (int monkey = 0; monkey < _monkeys.length; monkey++) {
       _monkeys[monkey].completeTurn((throwMonkey, item) {
         _monkeys[throwMonkey].items.add(item);
@@ -93,7 +76,7 @@ class Monkey {
       debugPrint(" Monkey ispects and item with a worry level of ${items[i]}");
       items[i] = _inspectItem(items[i]);
       _itemsInspected++;
-      if (_divideFear) items[i] = (items[i] / 3).floor();
+      items[i] = (items[i] / 3).floor();
       debugPrint("  Monkey gets bored with item. Worry level is divided by 3 to ${items[i]}.");
       int _monkey = _testItem(items[i]);
       callback(_monkey, items[i]);
