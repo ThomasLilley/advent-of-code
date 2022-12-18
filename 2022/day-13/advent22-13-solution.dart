@@ -15,19 +15,44 @@ void readFile() {
 }
 
 void solutionOne() {
-  List<int> validPairIndexes = [];
-  for (int p = 0; p < _input.length; p++) {
-    _input[p].split("\n").forEach((element) {
-      print(element.split(","));
-    });
+  List allPairs = [];
 
-    // _pair.forEach((element) {
-    //   element.forEach((se){
-    //     print(se);
-    //   });
-    // });
+  for (int p = 0; p < _input.length; p++) {
+    List _pairs = [];
+    _input[p].split("\n").forEach((element) {
+      List _currentList = [];
+      List single = element.split("");
+      for (int i = 0; i < single.length; i++) {
+        String letter = single[i];
+        switch (letter) {
+          case "[":
+            if (i == 0) continue;
+            _pairs.add(_currentList);
+            List newList = [];
+            _currentList.add(newList);
+            _currentList = newList;
+            break;
+          case "]":
+            if (i == single.length - 1) continue;
+            _currentList = _pairs.removeLast();
+            break;
+          case " ":
+          case ",":
+            continue;
+          default:
+            _currentList.add(letter);
+            break;
+        }
+      }
+
+      _pairs.add(_currentList);
+    });
+    allPairs.add(_pairs);
   }
-  print(validPairIndexes);
+
+  allPairs.forEach((element) {
+    print("${element.first} & ${element.last}");
+  });
 }
 
 void solutionTwo() {}
