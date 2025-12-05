@@ -1,7 +1,6 @@
 import 'dart:io';
 
 List<String> _input = [];
-List<List<dynamic>> _grid = [];
 void main() {
   readFile();
   solutionOne();
