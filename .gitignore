@@ -5,3 +5,4 @@ advent00-00-input.txt
 **/.venv
 **/.dart_tool
 **/pubspec.lock
+.txt
